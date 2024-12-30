@@ -1,0 +1,13 @@
+.sidebar {
+    height: 100vh;
+    background-color: #f8f9fa;
+  }
+  .sidebar a {
+    text-decoration: none;
+    color: #000;
+    padding: 10px 20px;
+    display: block;
+  }
+  .sidebar a:hover {
+    background-color: #e9ecef;
+  }

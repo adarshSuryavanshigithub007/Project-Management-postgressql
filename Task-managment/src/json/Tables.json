@@ -1,0 +1,38 @@
+[
+    {
+        "page_label":"View All",
+        "Teachers":[
+            {
+                "id":"id",
+                "controlName":"Name",
+                "controlValue":"name"
+                
+            },
+            {
+                "id":"id",
+                "controlName":"Last Name",
+                "controlValue":"last_name"
+            },
+            {
+                "id":"id",
+                "controlName":"Gender",
+                "controlValue":"gender"
+            },
+            {
+                "id":"id",
+                "controlName":"Age",
+                "controlValue":"age"
+            },
+            {
+                "id":"id",
+                "controlName":"Mobile Number",
+                "controlValue":"phone_number"
+            },
+            {
+                "id":"id",
+                "controlName":"Address",
+                "controlValue":"address"
+            }
+        ]
+    }
+]

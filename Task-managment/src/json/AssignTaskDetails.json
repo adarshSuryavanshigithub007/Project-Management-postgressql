@@ -1,0 +1,116 @@
+[
+    {
+        "page_label": "Work Item",
+        "field": [
+            {
+                "field_id": "project_name",
+                "field_label": "Project Name",
+                "field_placeholder": "Enter your Project Name",
+                "field_required": true,
+                "field_type": "text",
+                "field_col": 12
+            },
+            {
+                "field_id": "project_id",
+                "field_label": "Project Id",
+                "field_placeholder": "Enter your Project Id",
+                "field_required": true,
+                "field_type": "text",
+                "field_col": 12
+            },
+            {
+                "field_id": "Assign_to",
+                "field_label": "Assign To",
+                "field_type": "multiselect",
+                "options": [],
+                "required": true,
+                "field_col": 12
+            },
+            {
+                "field_id": "status",
+                "field_label": "Status",
+                "field_type": "select",
+                "options": [
+                    {
+                        "label": "To do",
+                        "value": "to_do"
+                    },
+                    {
+                        "label": "Progress",
+                        "value": "progress"
+                    },
+                    {
+                        "label": "Complete",
+                        "value": "complete"
+                    }
+                ],
+                "field_required": true,
+                "field_col": 6
+            },
+            {
+                "field_id": "priority",
+                "field_label": "Priority",
+                "field_type": "select",
+                "options": [
+                    {
+                        "label": "None",
+                        "value": "none"
+                    },
+                    {
+                        "label": "Low",
+                        "value": "low"
+                    },
+                    {
+                        "label": "Medium",
+                        "value": "medium"
+                    },
+                    {
+                        "label": "High",
+                        "value": "high"
+                    }
+                ],
+                "field_required": true,
+                "field_col": 6
+            },
+            {
+                "field_id": "start_date",
+                "field_label": "Start Date",
+                "field_placeholder": "Enter Start Date",
+                "field_required": true,
+                "field_type": "date",
+                "field_col": 6
+            },
+            {
+                "field_id": "end_date",
+                "field_label": "End Date",
+                "field_placeholder": "Enter End Date",
+                "field_required": true,
+                "field_type": "date",
+                "field_col": 6
+            },
+            {
+                "field_id": "description",
+                "field_label": "Description",
+                "field_type": "Textarea",
+                "field_placeholder": "Write a Description",
+                "field_required": true,
+                "field_col": 12
+            },
+            {
+                "field_id": "comments",
+                "field_label": "Comments",
+                "field_type": "text",
+                "field_placeholder": "Write a Comments",
+                "field_required": true,
+                "field_col": 12
+            },
+            {
+                "field_id": "attachment",
+                "field_label": "Attachment",
+                "field_required": true,
+                "field_type": "file",
+                "field_col": 12
+            }
+        ]
+    }
+]
