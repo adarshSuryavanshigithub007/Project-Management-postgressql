@@ -1,57 +1,44 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
-    "User",
+    'User',
     {
-      user_id:{
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-      },
       name: {
         type: DataTypes.STRING(100),
-        allowNull: false
-      },
-      email: {
-        type:DataTypes.STRING(100),
         allowNull: false,
       },
-      username:{
+      email: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
-      password:{
+      username: {
         type: DataTypes.STRING(100),
-        allowNull: false
+        allowNull: false,
       },
-      status:{
-        type:DataTypes.BOOLEAN,
-        defaultValue: true
-      },
-      avatar:{
+      password: {
         type: DataTypes.STRING(100),
-        allowNull:true,
-        defaultValue:"avatar.png"
+        allowNull: false,
       },
-      created_at:{
-        type:DataTypes.DATE,
-        allowNull:true
+      status: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
       },
-      updated_at:{
-        type:DataTypes.DATE,
-        allowNull:true
+      avatar: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
+        defaultValue: 'avatar.png',
       },
-      delete_at:{
-        type:DataTypes.DATE,
-        allowNull:true
-      }
     },
     {
-      timestamp:true
+      timestamps: true,
+      createdAt: 'created_at', // Maps Sequelize's createdAt to created_at
+      updatedAt: 'updated_at', // Maps Sequelize's updatedAt to updated_at
+      deletedAt: 'delete_at', // Maps Sequelize's deletedAt to delete_at
+      paranoid: true, // Enables soft delete
+      tableName: 'Users', // Explicitly specify table name
     }
-  )
-  return User
+  );
+
+  return User;
 };
