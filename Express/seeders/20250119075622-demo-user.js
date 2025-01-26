@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 module.exports = {
   async up(queryInterface, Sequelize) {
     // Hash the password asynchronously before inserting it into the database
-    const hashedPassword = await bcrypt.hash('123456789', 10);
+    const hashedPassword = await bcrypt.hash('123456', 10);
 
     // Insert the user record into the database
     return queryInterface.bulkInsert('Users', [
