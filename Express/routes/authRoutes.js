@@ -18,4 +18,9 @@ router.post (
     authController.updatePassword
 )
 
+router.post(
+    '/resetPassword',
+    authController.ResetPassword
+)
+
 module.exports = router; // Ensure you're exporting the router correctly

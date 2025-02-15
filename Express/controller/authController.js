@@ -85,4 +85,26 @@ const updatePassword = async (req, res, next) => {
     }
 }
 
-module.exports = { login, updatePassword };
+
+const ResetPassword = async(req,res,next)=>{
+    const userId = req.body.user_id
+    const {oldPassword,newPassword} = req.body
+    try {
+        const user = await User.findByPk(userId)
+        console.log("user<<<<<<<<<",user)
+        const validaPassword = await bcrypt.compare(oldPassword,user.password)
+        console.log("validaPassword<<<<<<<",validaPassword)
+        if(!validaPassword){
+            return sendResponse(res,401,false,'oldpassword not match')
+        }
+        const hashedPassword = await bcrypt.hash(newPassword,10)
+        console.log("hashedPassword ????????????",hashedPassword)
+       await user.update({password:hashedPassword},{where:{user_id:userId}})
+        sendResponse(res,200,true,'password Reset Successfully')
+    } catch (error) {
+        console.log(error.message)
+        sendResponse(res,500,false,null,null,error.message)
+    }
+}
+
+module.exports = { login, updatePassword, ResetPassword };
