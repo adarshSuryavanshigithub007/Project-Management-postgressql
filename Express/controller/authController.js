@@ -6,6 +6,7 @@ const { UserToken } = require('../models');
 require('dotenv').config();
 const crypto = require('crypto');
 const nodemailer = require("nodemailer");
+const { Op } = require('sequelize');
 const login = async (req, res, next) => {
     const { username, password } = req.body;
     try {
@@ -170,5 +171,62 @@ const forgotPassword = async (req, res) => {
     }
 }
 
+const updateProfile = async (req, res) => {
+    try {
+        console.log("Request Body:", req.body.user_id);
 
-module.exports = { login, updatePassword, ResetPassword, forgotPassword };
+        const userId = req.body.user_id;
+        if (!userId) {
+            return sendResponse(res, 400, false, "User ID is required");
+        }
+
+        const avatar = req.file ? req.file.filename : null;
+        console.log("Avatar=========:", req.file);
+
+        const { name, username, email, role, designation, mobile_number } = req.body;
+
+
+        // Check if email or username already exists
+        const existingUser = await User.findOne({
+            where: {
+                [Op.or]: [{ mobile_number }, { username }]
+            }
+        });
+
+        if (existingUser) {
+            const errors = {};
+            if (existingUser.username === username) {
+                errors.username = "User with the same username already exists";
+            }
+            if (existingUser.mobile_number === mobile_number) {
+                errors.mobile_number = "User with the same mobile number already exists";
+            }
+            return sendResponse(res, 400, false, "Validation Error", null, errors);
+        }
+
+        const updateData = { name, username, email, role, designation, mobile_number };
+
+        if (avatar) {
+            console.log("calling]]]]]", avatar)
+            updateData.avatar = avatar;
+        }
+        console.log("<<<<<<<<<first>>>>>>>>>", updateData)
+
+        // Update the user
+        await User.update(updateData, { where: { id: userId } });
+
+        // Fetch updated user details
+        const user = await User.findByPk(userId, {
+            attributes: { exclude: ["password", "created_at", "updated_at", "deleted_at"] }
+        });
+        console.log("user>>>>>>>>>>", user)
+        return sendResponse(res, 200, true, "Profile updated successfully", user);
+
+    } catch (error) {
+        console.error("Error in updateProfile function:", error.message);
+        return sendResponse(res, 500, false, error.message);
+    }
+};
+
+
+module.exports = { login, updatePassword, ResetPassword, forgotPassword, updateProfile };

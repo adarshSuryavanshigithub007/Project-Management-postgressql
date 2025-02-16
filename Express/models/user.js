@@ -1,5 +1,6 @@
 'use strict';
 const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
@@ -29,14 +30,27 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true,
         defaultValue: 'avatar.png',
       },
+      mobile_number: {
+        type: DataTypes.STRING(15), // Adjust length as needed
+        allowNull: true,
+      },
+      role: {
+        type: DataTypes.TEXT, // Use TEXT to allow long descriptions
+        allowNull: true,
+      },
+      designation : {
+        type: DataTypes.TEXT, // Use TEXT to allow long descriptions
+        allowNull: true,
+      },
+      
     },
     {
       timestamps: true,
-      createdAt: 'created_at', // Maps Sequelize's createdAt to created_at
-      updatedAt: 'updated_at', // Maps Sequelize's updatedAt to updated_at
-      deletedAt: 'delete_at', // Maps Sequelize's deletedAt to delete_at
-      paranoid: true, // Enables soft delete
-      tableName: 'Users', // Explicitly specify table name
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
+      deletedAt: 'delete_at',
+      paranoid: true,
+      tableName: 'Users',
     }
   );
 

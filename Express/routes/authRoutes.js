@@ -1,10 +1,9 @@
 const express = require('express');
-const { loginValidation, updatePasswordValidation, resetPasswordValidation } = require('../validations/authValidation');
+const { loginValidation, updatePasswordValidation, resetPasswordValidation,forgotPasswordValidation } = require('../validations/authValidation');
 const authController = require('../controller/authController'); 
 const  authMiddleware  = require('../middleware/authMiddleware');
-
 const router = express.Router();
-
+const upload = require("../middleware/multerMiddleware");
 router.post(
     '/login', 
     loginValidation, 
@@ -27,6 +26,13 @@ router.post(
 router.post(
     '/forgotpassword',
     authController.forgotPassword
+)
+
+router.post(
+    '/updateProfile',
+    upload.single("avatar"), // Add multer middleware for handling file uploads
+    authMiddleware,
+    authController.updateProfile
 )
 
 module.exports = router; // Ensure you're exporting the router correctly

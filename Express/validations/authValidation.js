@@ -29,7 +29,6 @@ const updatePasswordValidation = (req,res,next)=>{
   ])(req,res,next)
 }
 
-
 const resetPasswordValidation = (req,res,next)=>{
   return Validate([
     check('oldPassword')
@@ -42,4 +41,15 @@ const resetPasswordValidation = (req,res,next)=>{
 
 }
 
-module.exports = { loginValidation,updatePasswordValidation,resetPasswordValidation }; // Export using CommonJS
+const forgotPasswordValidation = ()=>{
+  return Validate([
+    check('email')
+    .isEmail()
+    .withMessage('Please enter a valid email'),
+
+  ])(req,res,next)
+}
+
+module.exports = { loginValidation,updatePasswordValidation,resetPasswordValidation,
+  forgotPasswordValidation
+ }; // Export using CommonJS

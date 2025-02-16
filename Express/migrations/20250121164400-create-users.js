@@ -32,6 +32,18 @@ module.exports = {
         allowNull: true,
         defaultValue: 'avatar.png',
       },
+      mobile_number: {
+        type: Sequelize.STRING(15), // Adjust length as needed
+        allowNull: true,
+      },
+      role: {
+        type: Sequelize.TEXT, // Use TEXT to allow long descriptions
+        allowNull: true,
+      },
+      designation : {
+        type: Sequelize.TEXT, // Use TEXT to allow long descriptions
+        allowNull: true,
+      },
       created_at: {
         type: Sequelize.DATE,
         allowNull: false,
