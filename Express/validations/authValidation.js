@@ -29,4 +29,17 @@ const updatePasswordValidation = (req,res,next)=>{
   ])(req,res,next)
 }
 
-module.exports = { loginValidation,updatePasswordValidation }; // Export using CommonJS
+
+const resetPasswordValidation = (req,res,next)=>{
+  return Validate([
+    check('oldPassword')
+    .isLength({ min: 6 })
+    .withMessage('Old password must be at least 6 characters long'),
+    check('newPassword')
+    .isLength({ min: 6 })
+    .withMessage('New password must be at least 6 characters long'),
+  ])(req,res,next)
+
+}
+
+module.exports = { loginValidation,updatePasswordValidation,resetPasswordValidation }; // Export using CommonJS

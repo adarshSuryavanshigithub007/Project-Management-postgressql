@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginValidation, updatePasswordValidation } = require('../validations/authValidation');
+const { loginValidation, updatePasswordValidation, resetPasswordValidation } = require('../validations/authValidation');
 const authController = require('../controller/authController'); 
 const  authMiddleware  = require('../middleware/authMiddleware');
 
@@ -20,7 +20,13 @@ router.post (
 
 router.post(
     '/resetPassword',
+    resetPasswordValidation,
     authController.ResetPassword
+)
+
+router.post(
+    '/forgotpassword',
+    authController.forgotPassword
 )
 
 module.exports = router; // Ensure you're exporting the router correctly
