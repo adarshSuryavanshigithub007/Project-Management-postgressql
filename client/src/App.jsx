@@ -1,15 +1,20 @@
+import React from "react";
+import { HashRouter, Routes, Route } from "react-router-dom";
+// import Layout from "./components/Layout";  
 
-import "./App.css";
-import Login from "./authentication/Login";
+import Navbar from "./layout/Navbar";
+import AssignProjects from "./pages/users/AssignProjects";
 
-
-function App() {
+const App = () => {
   return (
-    <div>
-<h1> hello world</h1>
-<Login/>
-    </div>
+    <HashRouter>
+      <Navbar>
+        <Routes>
+          <Route path="/assign" element={<AssignProjects />} />
+        </Routes>
+      </Navbar>
+    </HashRouter>
   );
-}
+};
 
 export default App;
