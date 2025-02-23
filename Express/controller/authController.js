@@ -9,6 +9,7 @@ const nodemailer = require("nodemailer");
 const { Op } = require('sequelize');
 const login = async (req, res, next) => {
     const { username, password } = req.body;
+    console.log("?????????", username)
     try {
         const user = await User.findOne({ where: { username } });
         if (!user) {
@@ -33,6 +34,7 @@ const login = async (req, res, next) => {
             name: user.name,
             email: user.email,
             username: user.username,
+            fullname: user.fullname,
             status: user.status,
             avatar: user.avatar,
             created_at: user.created_at,
@@ -56,7 +58,7 @@ const login = async (req, res, next) => {
 
 //update Password 
 const updatePassword = async (req, res, next) => {
-    const userId = req.body.user_id
+    const userId = req.user.id
     const { oldPassword, newPassword, confirmPassword } = req.body;
 
     if (newPassword !== confirmPassword) {
@@ -82,26 +84,50 @@ const updatePassword = async (req, res, next) => {
 
 
 const ResetPassword = async (req, res, next) => {
-    const userId = req.body.user_id
-    const { oldPassword, newPassword } = req.body
+    const { email, otp, newPassword, oldPassword } = req.body;
+
     try {
-        const user = await User.findByPk(userId)
-        console.log("user<<<<<<<<<", user)
-        const validaPassword = await bcrypt.compare(oldPassword, user.password)
-        console.log("validaPassword<<<<<<<", validaPassword)
-        if (!validaPassword) {
-            return sendResponse(res, 401, false, 'oldpassword not match')
+        const user = await User.findOne({ where: { email } });
+        console.log("User Found:", user);
+
+        if (!user) {
+            return sendResponse(res, 404, false, "User not found", null, { email: "User not found" });
         }
-        const hashedPassword = await bcrypt.hash(newPassword, 10)
-        console.log("hashedPassword ????????????", hashedPassword)
-        await user.update({ password: hashedPassword }, { where: { user_id: userId } })
-        sendResponse(res, 200, true, 'password Reset Successfully')
+
+        const userToken = await UserToken.findOne({
+            where: {
+                user_id: user.id,
+                token: otp,
+                expire_at: { [Op.gt]: new Date() }, // Only find valid OTPs
+            },
+        });
+
+        if (!userToken) {
+            return sendResponse(res, 400, false, "Invalid or expired OTP", null, { otp: "Invalid or expired OTP" });
+        }
+
+        const validPassword = await bcrypt.compare(oldPassword, user.password);
+        console.log("Old Password Match:", validPassword);
+
+        if (!validPassword) {
+            return sendResponse(res, 401, false, "Old password does not match");
+        }
+
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+        console.log("New Hashed Password:", hashedPassword);
+
+        await user.update({ password: hashedPassword });
+
+        await UserToken.destroy({ where: { user_id: user.id, token: otp } });
+
+        return sendResponse(res, 200, true, "Password reset successfully");
     } catch (error) {
-        console.log(error.message)
+        console.error("Reset Password Error:", error);
         next(error)
-        sendResponse(res, 500, false, null, null, error.message)
+        return sendResponse(res, 500, false, "Internal Server Error", null, { error: error.message });
     }
-}
+};
+
 
 // Update Password function
 const transporter = nodemailer.createTransport({
@@ -112,7 +138,7 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-const forgotPassword = async (req, res) => {
+const forgotPassword = async (req, res, next) => {
     const { email } = req.body;
 
     try {
@@ -165,17 +191,18 @@ const forgotPassword = async (req, res) => {
 
     } catch (error) {
         console.error("Error in forgotPassword:", error);
+        next(error)
         sendResponse(res, 500, false, "Internal server error", null, {
             error: error.message,
         });
     }
 }
 
-const updateProfile = async (req, res) => {
+const updateProfile = async (req, res, next) => {
     try {
-        console.log("Request Body:", req.body.user_id);
+        console.log("Request Body:", req.user.id);
 
-        const userId = req.body.user_id;
+        const userId = req.user.id;
         if (!userId) {
             return sendResponse(res, 400, false, "User ID is required");
         }
@@ -183,7 +210,7 @@ const updateProfile = async (req, res) => {
         const avatar = req.file ? req.file.filename : null;
         console.log("Avatar=========:", req.file);
 
-        const { name, username, email, role, designation, mobile_number } = req.body;
+        const { name, username, email, role, designation, mobile_number, fullname } = req.body;
 
 
         // Check if email or username already exists
@@ -204,7 +231,7 @@ const updateProfile = async (req, res) => {
             return sendResponse(res, 400, false, "Validation Error", null, errors);
         }
 
-        const updateData = { name, username, email, role, designation, mobile_number };
+        const updateData = { name, username, email, role, designation, mobile_number, fullname };
 
         if (avatar) {
             console.log("calling]]]]]", avatar)
@@ -224,9 +251,60 @@ const updateProfile = async (req, res) => {
 
     } catch (error) {
         console.error("Error in updateProfile function:", error.message);
+        next(error)
         return sendResponse(res, 500, false, error.message);
+
     }
 };
 
 
-module.exports = { login, updatePassword, ResetPassword, forgotPassword, updateProfile };
+const me = async (req, res, next) => {
+    try {
+        const user = await User.findByPk(req.user.id, {
+            attributes: { exclude: ["password",] }
+
+        })
+        if (!user) {
+            return sendResponse(res, 404, false, "User not found");
+        }
+        return sendResponse(res, 200, true, "User found", user);
+    } catch (error) {
+        console.error("Error in me function:", error.message);
+        next(error)
+        return sendResponse(res, 500, false, error.message);
+
+    }
+}
+
+const logout = async (req, res, next) => {
+    const token = req.header("Authorization")?.replace("Bearer ", "");
+
+    if (!token) {
+        return sendResponse(res, 401, false, "Access denied. No token provided.");
+    }
+
+    try {
+        // Decode the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Delete the token from the UserToken table
+        await UserToken.destroy({
+            where: {
+                token: token,
+                user_id: decoded.id,
+            },
+        });
+
+        return sendResponse(res, 200, true, "Logged out successfully");
+    } catch (error) {
+        next(error)
+        return sendResponse(res, 500, false, error.message);
+
+    }
+}
+
+
+
+
+
+module.exports = { login, updatePassword, ResetPassword, forgotPassword, updateProfile, me, logout };

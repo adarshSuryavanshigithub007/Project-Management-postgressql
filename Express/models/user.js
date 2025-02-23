@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING(100),
         allowNull: false,
       },
+      fullname:{
+        type: DataTypes.STRING(100),
+        allowNull: false,
+      },
       password: {
         type: DataTypes.STRING(100),
         allowNull: false,
@@ -41,6 +45,11 @@ module.exports = (sequelize, DataTypes) => {
       designation : {
         type: DataTypes.TEXT, // Use TEXT to allow long descriptions
         allowNull: true,
+      },
+      isAdmin: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false,
+        defaultValue: false, // Ensuring default is non-admin
       },
       
     },
