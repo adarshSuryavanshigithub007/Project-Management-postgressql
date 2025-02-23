@@ -15,20 +15,7 @@ import Report from "./views/admin/Report";
 function App() {
   return (
     <div>
-      
-      {/* <Register/> */}
-      <HashRouter>
-        <Navbar />
-        {/* <AdminNavbar/> */}
-        <Routes>
-          <Route exact path="/" element={<Dashboard />} />
-          <Route exact path="/projects" element={<Projects />} />
-          <Route exact path="/assignprojects" element={<AssignProjects />} />
-          <Route exact path="/board" element={<TaskManagement />} />
-          <Route exact path="/assigntask" element={<AssignTask />} />
-          <Route exact path="/report" element={<Report />} />
-        </Routes>
-      </HashRouter>
+
     </div>
   );
 }
