@@ -18,5 +18,7 @@ export const AuthService = async (endPoint, data, rawResponse) => {
     return response.data;
   } catch (error) {
     console.log(error);
+    return error
+  
   }
 };

@@ -44,7 +44,7 @@ const Navbar = ({ children }) => {
         >
           <ul className="list-unstyled p-3 flex-grow-1">
             <li className="mb-3">
-              <Link to="/assign" className="text-decoration-none d-flex align-items-center text-dark">
+              <Link to="/dashboard" className="text-decoration-none d-flex align-items-center text-dark">
                 <i className="bi bi-grid me-2"></i> {isSidebarOpen && "Dashboard"}
               </Link>
             </li>

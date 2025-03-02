@@ -33,7 +33,7 @@ const Dashboard = () => {
           >
             <h5>
               <FontAwesomeIcon icon={faTasks} className="me-2" />
-              Total number of Tasks
+                number of Tasks
             </h5>
             <p className="h4">120</p> {/* Example total tasks */}
             <small>Total tasks in progress</small>

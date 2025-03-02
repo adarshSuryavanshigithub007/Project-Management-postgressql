@@ -39,11 +39,12 @@ const login = async (req, res, next) => {
             avatar: user.avatar,
             created_at: user.created_at,
             updated_at: user.updated_at,
-            deleted_at: user.deleted_at,
-            token: token,
+            deleted_at: user.deleted_at
+           ,
         };
         sendResponse(res, 200, true, 'User login successful', {
             user: userWithoutPassword,
+            token: token
         });
         // Ensure no further responses are sent after `sendResponse`
         return; // Return here to avoid continuing the function
