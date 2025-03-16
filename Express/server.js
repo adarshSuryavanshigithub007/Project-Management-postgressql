@@ -25,7 +25,7 @@ app.use("/api", routes);
 
 const Server_PORT =process.env.SERVER_PORT || 3000
 app.listen(Server_PORT, () => {
-    console.log(`server is runnig on port http://192.168.187.223: ${Server_PORT}`)
+    console.log(`server is runnig on port http://192.168.39.223: ${Server_PORT}`)
 })
 app.get('/', (req, res) => {
     res.status(200).send('Hello! The server is running successfully.');

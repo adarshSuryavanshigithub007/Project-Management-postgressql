@@ -4,26 +4,41 @@ import { AuthService } from "../services/AuthService";
 import { toast } from "react-toastify";
 import { setToken } from "../utils/commonUtils/TokenService";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import Loader from "../components/loader/Loader";
+import { USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS } from "../utils/Constant";
 
 const Login = () => {
- const navigate =  useNavigate()
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+  const { loading, error, userInfo } = useSelector(state => state.userLogin);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
+  console.log(loading, error, userInfo)
 
   const handleSubmit = () => {
     console.log("Form Submitted:", formData);
-    try {
-      // API call to login
-      AuthService(`/login`, formData).then((response) => {
+    dispatch({ type: USER_LOGIN_REQUEST });
+
+    AuthService(`/login`, formData)
+      .then((response) => {
         if (response.success === true) {
-          setToken({ token: response.data.token }); // Pass as an object
+          dispatch({
+            type: USER_LOGIN_SUCCESS,
+            payload: response.data
+          });
           navigate('/dashboard')
+          setToken({ token: response.data.token });
           toast.success(response.message);
           setErrors({});
         } else {
+          dispatch({
+            type: USER_LOGIN_FAIL,
+            payload: response.response.data.message
+          });
           setErrors({
             error: response.message,
             password: response.response.data.error?.password,
@@ -31,14 +46,19 @@ const Login = () => {
           });
           toast.error(response.response.data.message);
           console.log(response.response.data.message);
-          console.log(response.response.data.message);
           console.log(response.response.data.error);
         }
+      })
+      .catch((error) => {
+        console.log(error);
+        dispatch({
+          type: USER_LOGIN_FAIL,
+          payload: error?.response?.data?.message || "Login failed. Please try again."
+        });
+        toast.error("Login failed. Please try again.");
       });
-    } catch (error) {
-      console.log(error);
-    }
   };
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,6 +71,7 @@ const Login = () => {
 
   return (
     <>
+      {loading && <Loader />}
       <AuthFormComponent
         onSubmit={handleSubmit}
         submitButtonText="Login"

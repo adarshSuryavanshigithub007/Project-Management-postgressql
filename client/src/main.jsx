@@ -10,11 +10,11 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
   /* The following line can be included in your src/index.js or App.js file */
 }
 import 'bootstrap/dist/css/bootstrap.min.css';
-
-
+import { Provider } from 'react-redux';
+import store from './Store';
 
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+  <Provider store={store}>
+  <App />
+</Provider>
 )
