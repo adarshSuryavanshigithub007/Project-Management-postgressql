@@ -5,8 +5,11 @@ import {
   faCheckCircle,
   faClock,
 } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
 
 const Dashboard = () => {
+  const { loading, error, userInfo } = useSelector(state => state.userLogin);
+  console.log(userInfo.user)
   return (
     <div className="container mt-4">
       <div className="row g-3">
@@ -70,6 +73,8 @@ const Dashboard = () => {
           </div>
         </div>
       </div>
+
+
 
       {/* Optionally, you can add more sections like charts below */}
     </div>

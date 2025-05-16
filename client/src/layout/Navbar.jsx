@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { Assets } from "../assets/Assets";
 import { Link } from "react-router-dom"; // ✅ Corrected import
+import { useSelector } from "react-redux";
 
 const Navbar = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [notifications, setNotifications] = useState(3);
-
+  const { error, userInfo } = useSelector(state => state.userLogin);
+  console.log(userInfo)
   return (
     <div className="d-flex flex-column" style={{ height: "100vh" }}>
       {/* Full-Width Header */}
@@ -48,14 +50,12 @@ const Navbar = ({ children }) => {
                 <i className="bi bi-grid me-2"></i> {isSidebarOpen && "Dashboard"}
               </Link>
             </li>
-            
           </ul>
-
+          {/* <img  /> */}
           {/* Profile Section at Bottom */}
           <div className="p-3 border-top bg-light d-flex align-items-center position-relative">
             <img
-              src={Assets.avatar}
-              alt="User"
+              src={`http://192.168.29.196:3000/uploads/avatars/1739723575615-595685101.jpg`} alt="User Avatar"
               className="rounded-circle me-2"
               width="30"
               height="30"

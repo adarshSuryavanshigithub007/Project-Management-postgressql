@@ -11,53 +11,60 @@ import { USER_LOGIN_FAIL, USER_LOGIN_REQUEST, USER_LOGIN_SUCCESS } from "../util
 const Login = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const { loading, error, userInfo } = useSelector(state => state.userLogin);
+  const { error, userInfo } = useSelector(state => state.userLogin);
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
   const [errors, setErrors] = useState({});
-  console.log(loading, error, userInfo)
+  console.log(error, userInfo)
 
-  const handleSubmit = () => {
-    console.log("Form Submitted:", formData);
-    dispatch({ type: USER_LOGIN_REQUEST });
+  const handleSubmit = async () => {
+  dispatch({ type: USER_LOGIN_REQUEST });
+  dispatch({ type: 'LOADING_START' });
 
-    AuthService(`/login`, formData)
-      .then((response) => {
-        if (response.success === true) {
-          dispatch({
-            type: USER_LOGIN_SUCCESS,
-            payload: response.data
-          });
-          navigate('/dashboard')
-          setToken({ token: response.data.token });
-          toast.success(response.message);
-          setErrors({});
-        } else {
-          dispatch({
-            type: USER_LOGIN_FAIL,
-            payload: response.response.data.message
-          });
-          setErrors({
-            error: response.message,
-            password: response.response.data.error?.password,
-            username: response.response.data.error?.username,
-          });
-          toast.error(response.response.data.message);
-          console.log(response.response.data.message);
-          console.log(response.response.data.error);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        dispatch({
-          type: USER_LOGIN_FAIL,
-          payload: error?.response?.data?.message || "Login failed. Please try again."
-        });
-        toast.error("Login failed. Please try again.");
+  try {
+    const authResponse = await AuthService(`/login`, formData);
+    console.log(authResponse);
+
+    if (authResponse.success === true) {
+      dispatch({
+        type: USER_LOGIN_SUCCESS,
+        payload: authResponse.data,
       });
-  };
+
+      setToken({ token: authResponse.data.token });
+      toast.success(authResponse.message);
+      navigate('/dashboard');
+      setErrors({});
+    } else {
+      dispatch({
+        type: USER_LOGIN_FAIL,
+        payload: authResponse.response?.data?.message,
+      });
+
+      setErrors({
+        error: authResponse.message,
+        password: authResponse.response?.data?.error?.password,
+        username: authResponse.response?.data?.error?.username,
+      });
+
+      toast.error(authResponse.response?.data?.message);
+    }
+  } catch (error) {
+    console.error('Unexpected error:', error);
+
+    dispatch({
+      type: USER_LOGIN_FAIL,
+      payload: error?.response?.data?.message,
+    });
+
+    toast.error(error?.response?.data?.message);
+  } finally {
+    dispatch({ type: 'LOADING_END' });
+  }
+};
+
 
 
   const handleChange = (e) => {
@@ -71,7 +78,7 @@ const Login = () => {
 
   return (
     <>
-      {loading && <Loader />}
+
       <AuthFormComponent
         onSubmit={handleSubmit}
         submitButtonText="Login"
